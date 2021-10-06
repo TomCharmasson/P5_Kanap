@@ -49,18 +49,3 @@ function getProducts() {
 }
 
 getProducts();
-
-// -------------------------------------------------
-// Faire plusieurs requetes
-// -------------------------------------------------
-/*
-
-Promise.all([fetch(url1), fetch(url2)])
-.then(function (results) {
-  return Promise.all([results, post(url3)]);
-})
-  .then(function (allResults) {
-    // We are done here !
-  });
-
-  */
