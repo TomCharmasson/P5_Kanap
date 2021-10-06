@@ -1,57 +1,61 @@
-// En JS, commencez par requêter l’API pour lui demander l’ensemble des produits ; récupérer la réponse émise, et parcourir celle-ci pour insérer chaque élément (chaque produit) dans la page d’accueil (dans le DOM)
-
 // -------------------------------------------------
-// Constantes
-// -------------------------------------------------
-const item = document.getElementById("items");
-
-// -------------------------------------------------
-// Récupérez le résultat de la requête
+// constantes URL
 // -------------------------------------------------
 
-function getProducts(urlToFetch, indexTableau) {
-  fetch(urlToFetch)
-    .then(function (res) {
+const urlAPI = "http://localhost:3000/api/products";
+
+// -------------------------------------------------
+// Variables DOM
+// -------------------------------------------------
+
+let productItem = document.getElementsByClassName("items")[0];
+
+//  -------------------------------------------------
+//  Récupérez le résultat de la requête
+//  -------------------------------------------------
+
+// Récupérer les éléments pour la page d'accueil dans l'API
+
+function getProducts() {
+  fetch(urlAPI)
+    .then((res) => {
       if (res.ok) {
         return res.json();
       }
     })
-    .then(function (value) {
-      item.innerHTML = value[indexTableau].name;
-    })
-    .catch(function (err) {
-      // Une erreur est survenue
+    .then((valeur) => {
+      valeur.forEach((element) => {
+        let elt =
+          '<a href="./product.html?id=' +
+          element._id +
+          '">' +
+          "<article>" +
+          '<img src="' +
+          element.imageUrl +
+          '" alt="' +
+          element.altTxt +
+          '" />' +
+          '<h3 class="productName">' +
+          element.name +
+          "</h3>" +
+          '<p class="productDescription">' +
+          element.description +
+          "</p>" +
+          "</article>" +
+          "</a>";
+        productItem.innerHTML = productItem.innerHTML + elt;
+      });
     });
 }
 
-getProducts("http://localhost:3000/api/products", 0);
-
-// -------------------------------------------------
-// Récupérer le résultat de la requete (fonction fléché)
-// -------------------------------------------------
-
-/*
-function GetProducts() {
-  fetch("http://localhost:3000/api/products").then((response) => {
-    if (response.ok) {
-      response.json().then((data) => {
-        item.innerHTML = data;
-      });
-    } else {
-      console.error("error :");
-    }
-  });
-}
-
-GetProducts();
-*/
+getProducts();
 
 // -------------------------------------------------
 // Faire plusieurs requetes
 // -------------------------------------------------
 /*
 
-Promise.all([get(url1), get(url2)])
+Promise.all([fetch(url1), fetch(url2)])
 .then(function (results) {
   return Promise.all([results, post(url3)]);
 })
