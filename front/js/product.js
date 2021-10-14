@@ -66,7 +66,6 @@ getProductsDetails();
 //  -------------------------------------------------
 
 // Ecouter l'évenement
-
 let ajouterAuPanier = document.getElementById("addToCart");
 
 ajouterAuPanier.addEventListener("click", (event) => {
@@ -79,6 +78,7 @@ ajouterAuPanier.addEventListener("click", (event) => {
   // Obtenir la quantité seléctionnée
   let productQuantity = document.querySelector('.item__content__settings__quantity input[value="1"]').valueAsNumber;
 
+  // Vérifier que tous les champs ont été renseigné
   if (isNaN(productQuantity)) {
     window.alert("Veuillez renseigner un nombre");
     return;
@@ -87,6 +87,7 @@ ajouterAuPanier.addEventListener("click", (event) => {
     window.alert("Veuillez renseigner une couleur");
     return;
   }
+
   // Objet contenant 3 valeurs d'un produit
   let productOption = {
     id: productId,
@@ -94,9 +95,10 @@ ajouterAuPanier.addEventListener("click", (event) => {
     color: colorSelected,
   };
 
-  // Creer un tableau dans le localStorage
+  // Créer un tableau dans le localStorage
   let myLocalStorage = JSON.parse(localStorage.getItem("produit"));
 
+  // Vérifie que MyLocalStorage existe
   if (myLocalStorage === null) {
     myLocalStorage = [];
   }
@@ -116,21 +118,24 @@ ajouterAuPanier.addEventListener("click", (event) => {
     }
   };
 
+  // Fonction qui vérifie si le même produit existe (même Id et même couleur)
   const raiseTheQuantityIfSameProduct = () => {
-    let trouver = false;
+    let foundIt = false;
     myLocalStorage.forEach((element) => {
       if (element.id === productId && element.color === colorSelected) {
         element.quantity += productQuantity;
-        trouver = true;
+        foundIt = true;
       }
     });
-    if (!trouver) {
+    if (!foundIt) {
       addProductToLocalStorage();
     }
   };
 
+  // Lance la Fonction suivante :
   raiseTheQuantityIfSameProduct();
 
   localStorage.setItem("produit", JSON.stringify(myLocalStorage));
-  // confirmation();
+
+  confirmation();
 });
