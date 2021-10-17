@@ -9,6 +9,8 @@ const urlAPI = "http://localhost:3000/api/products";
 // -------------------------------------------------
 
 let cartItem = document.querySelector("#cart__items");
+let totalQuantity = document.querySelector("#totalQuantity");
+let totalPrice = document.querySelector("#totalPrice");
 
 // Cibler le local storage
 let myLocalStorage = JSON.parse(localStorage.getItem("produit"));
@@ -16,6 +18,17 @@ let myLocalStorage = JSON.parse(localStorage.getItem("produit"));
 // -------------------------------------------------
 // Afficher les produits dans le panier
 // -------------------------------------------------
+
+// Si il n'y a pas de panier =>
+// Affiche : Pas d'article dans le panier
+// Sinon =>
+// Récupere les éléments du panier et garde les en mémoire
+
+// Pour chaque éléménts du panier
+// Fetch URL de l'API + l'id récupéré dans le panier
+// => Ajoute l'élément sur la page
+//
+//
 
 function productsInBasket() {
   // Recuperer les éléments de l'API
@@ -56,7 +69,7 @@ function productsInBasket() {
                 productColorInBasket +
                 "</p>" +
                 "<p>" +
-                elementAPI.price +
+                elementAPI.price * productQuantityInBasket +
                 ",00 €</p>" +
                 "</div>" +
                 '<div class="cart__item__content__settings">' +
@@ -75,6 +88,9 @@ function productsInBasket() {
                 "</div>" +
                 "</article>";
               cartItem.innerHTML = cartItem.innerHTML + elt;
+
+              // totalQuantity.innerHTML = totalQuantity.innerHTML + productQuantityInBasket;
+              // totalPrice.innerHTML = totalPrice.innerHTML + elementAPI.price * productQuantityInBasket;
             }
           });
         }
