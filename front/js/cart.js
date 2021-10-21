@@ -20,12 +20,13 @@ let myLocalStorage = JSON.parse(localStorage.getItem("produit"));
 // -------------------------------------------------
 
 async function productsInBasket() {
+  console.log("HERE");
   cart = "";
   cartItem.innerHTML = "";
   if (myLocalStorage === null) {
     let emptyCart = `
     <div class="cart__empty">
-      <p>Votre panier est vide ! 😢</p>
+    <p>Votre panier est vide ! 😢</p>
     </div>
     `;
     cartItem.innerHTML = emptyCart;
@@ -36,6 +37,7 @@ async function productsInBasket() {
     for (const element of myLocalStorage) {
       let productColorInBasket = element.color;
       let productQuantityInBasket = element.quantity;
+
       let elt =
         '<article class="cart__item" data-id="' +
         element.id +
@@ -82,16 +84,18 @@ async function productsInBasket() {
         "</div>" +
         "</div>" +
         "</article>";
+
       totalQuantityInBasket += productQuantityInBasket;
       totalPriceInBasket += productQuantityInBasket * element.price;
 
       cartItem.innerHTML += elt;
-      // cartItem.innerHTML = cartItem.innerHTML + elt;
+
+      // -------------------------------------------------
+      // Evenements
+      // -------------------------------------------------
 
       // Cibler les éléments pour l'événement change
       let itemQuantity = document.querySelectorAll(".itemQuantity");
-      // let updateItemQuantity = document.querySelectorAll(".item__quantity__update");
-      // let updateItemPrice = document.querySelectorAll(".item__price__update");
 
       // Ajout de l'évènement change pour modifier la quantité du produit dans le panier
       itemQuantity.forEach((createdQuantity) => {
@@ -99,7 +103,7 @@ async function productsInBasket() {
           event.preventDefault();
           let setQuantity = parseInt(createdQuantity.value, 10);
           itemQuantity = setQuantity;
-          console.log(createdQuantity);
+
           // Vérifie que l'utilisateur renseigne correctement le champ
           if (isNaN(itemQuantity) || itemQuantity === 0) {
             setQuantity = 1;
@@ -143,6 +147,7 @@ async function productsInBasket() {
                   `;
               cartItem.innerHTML = emptyCart;
             }
+
             // Ne fait rien si annulation de la suppression
           } else {
             console.log("Ok, je n'enlève rien");
@@ -154,12 +159,14 @@ async function productsInBasket() {
     }
     totalQuantity.innerHTML = totalQuantityInBasket;
     totalPrice.innerHTML = totalPriceInBasket;
+    console.log("HERE");
   }
 }
 
 fetchAPI();
 
 async function fetchAPI() {
+  console.log("HERE");
   if (myLocalStorage != null) {
     for await (const element of myLocalStorage) {
       let productIdInBasket = element.id;
@@ -181,6 +188,86 @@ async function fetchAPI() {
         });
     }
     localStorage.setItem("produit", JSON.stringify(myLocalStorage));
+
     productsInBasket();
+    console.log("HERE");
   }
 }
+
+// -------------------------------------------------
+// Formulaire
+// -------------------------------------------------
+
+let contactForm = document.getElementById("form");
+let fields = document.querySelectorAll("input[required]");
+
+// Ajouts des événements sur les champs
+fields.forEach((field) => {
+  field.addEventListener(
+    "focus",
+    () => {
+      resetField(field);
+    },
+    false
+  );
+  field.addEventListener(
+    "blur",
+    () => {
+      validadeField(field);
+    },
+    false
+  );
+});
+
+// Ajout de l'évènement sur l'input du formulaire
+contactForm.addEventListener(
+  "submit",
+  (event) => {
+    event.preventDefault();
+    fields.forEach((field) => {
+      resetField(field);
+    });
+    let valid = true;
+
+    fields.forEach((field) => {
+      if (!validadeField(field)) {
+        valid = false;
+      }
+    });
+    if (valid) {
+      event.target.submit();
+    }
+  },
+  false
+);
+
+// Fonction pour valider un champ
+function validadeField(field) {
+  if (field.checkValidity()) {
+    field.classList.add("valid");
+    field.nextElementSibling.classList.add("valid__text");
+    field.nextElementSibling.innerHTML = "Champ Valide.";
+    return true;
+  } else {
+    field.classList.add("invalid");
+    field.nextElementSibling.innerHTML = field.validationMessage;
+    return false;
+  }
+}
+
+// Fonction pour réinitialiser un champ
+function resetField(field) {
+  let fieldLabel = field.nextElementSibling;
+  field.classList.remove("invalid");
+  field.classList.remove("valid");
+
+  while (fieldLabel.innerHTML != "") {
+    fieldLabel.innerHTML = "";
+  }
+  field.valid = true;
+}
+
+// Regex email JS
+// /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+// Constituer un objet contact (à partir des données du formulaire) et un tableau de produits.

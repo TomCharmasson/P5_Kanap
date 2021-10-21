@@ -141,6 +141,20 @@ h2 {
   transform: scale(1.05);
 }
 
+/* Pour changer la couleur des champs invalide */
+.invalid {
+  border: #fbbcbc 2px solid !important;
+}
+.valid {
+  border: #51d847 2px solid !important;
+}
+.valid__text {
+  color: #51d847 !important;
+}
+.onfocus {
+  border: blue 2px solid !important;
+}
+
 /***************/
 /*Media queries*/
 /***************/
