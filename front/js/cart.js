@@ -206,6 +206,7 @@ fields.forEach((field) => {
   field.addEventListener(
     "focus",
     () => {
+      onfocus(field);
       resetField(field);
     },
     false
@@ -213,6 +214,7 @@ fields.forEach((field) => {
   field.addEventListener(
     "blur",
     () => {
+      onblur(field);
       validadeField(field);
     },
     false
@@ -235,6 +237,7 @@ contactForm.addEventListener(
       }
     });
     if (valid) {
+      addContactToLocalStorage();
       event.target.submit();
     }
   },
@@ -260,6 +263,7 @@ function resetField(field) {
   let fieldLabel = field.nextElementSibling;
   field.classList.remove("invalid");
   field.classList.remove("valid");
+  field.nextElementSibling.classList.remove("valid__text");
 
   while (fieldLabel.innerHTML != "") {
     fieldLabel.innerHTML = "";
@@ -267,7 +271,56 @@ function resetField(field) {
   field.valid = true;
 }
 
-// Regex email JS
-// /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+// Fonction pour mettre en valeur le champ en cours
+function onfocus(field) {
+  field.classList.add("onfocus");
+}
 
-// Constituer un objet contact (à partir des données du formulaire) et un tableau de produits.
+function onblur(field) {
+  field.classList.remove("onfocus");
+}
+
+// Cibler les inputs du formulaire pour recupérer leurs valeurs
+let firstName = document.getElementById("firstName").value;
+let lastName = document.getElementById("lastName").value;
+let address = document.getElementById("address").value;
+let city = document.getElementById("city").value;
+let contactEmail = document.getElementById("email").value;
+
+// Création du contact
+let contact = {
+  prenom: firstName,
+  nom: lastName,
+  adresse: address,
+  ville: city,
+  email: contactEmail,
+};
+
+// Fonction Ajouter dans le local storage
+const addContactToLocalStorage = () => {
+  localStorage.setItem("contact", JSON.stringify(contact));
+};
+
+// Envoyer le formulaire
+
+// function send(e) {
+//   e.preventDefault();
+//   fetch("https://mockbin.com/request", {
+//     method: "POST",
+//     headers: {
+//       Accept: "application/json",
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify({ value: document.getElementById("value").value }),
+//   })
+//     .then(function (res) {
+//       if (res.ok) {
+//         return res.json();
+//       }
+//     })
+//     .then(function (value) {
+//       document.getElementById("result").innerText = value.postData.text;
+//     });
+// }
+
+// document.getElementById("form").addEventListener("submit", send);
