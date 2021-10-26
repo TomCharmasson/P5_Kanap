@@ -111,7 +111,7 @@ ajouterAuPanier.addEventListener("click", (event) => {
 
   // Fonction Confirmation ajout au panier
   const confirmation = () => {
-    if (window.confirm(`Votre produit a bien été ajouté au panier ! Cliquer OK pour voir le panier ou ANNULER pour revenir à l'accueil`)) {
+    if (window.confirm(`Ajouté au panier ✅😁 ! Cliquer OK pour voir votre panier ou ANNULER pour continuer le shopping 💸 !`)) {
       window.location.href = "cart.html";
     } else {
       window.location.href = "index.html";
