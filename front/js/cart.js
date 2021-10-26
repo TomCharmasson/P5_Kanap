@@ -20,10 +20,13 @@ let myLocalStorage = JSON.parse(localStorage.getItem("produit"));
 // -------------------------------------------------
 
 async function productsInBasket() {
-  console.log("HERE");
   cart = "";
   cartItem.innerHTML = "";
-  if (myLocalStorage === null) {
+
+  let totalQuantityInBasket = 0;
+  let totalPriceInBasket = 0;
+
+  if (myLocalStorage === null || myLocalStorage.length === 0) {
     let emptyCart = `
     <div class="cart__empty">
     <p>Votre panier est vide ! 😢</p>
@@ -31,9 +34,6 @@ async function productsInBasket() {
     `;
     cartItem.innerHTML = emptyCart;
   } else {
-    let totalQuantityInBasket = 0;
-    let totalPriceInBasket = 0;
-
     for (const element of myLocalStorage) {
       let productColorInBasket = element.color;
       let productQuantityInBasket = element.quantity;
@@ -136,19 +136,6 @@ async function productsInBasket() {
             myLocalStorage = myLocalStorage.filter((elt) => elt.id + "-" + elt.color !== deleteItemcreated.id);
             localStorage.setItem("produit", JSON.stringify(myLocalStorage));
             deleteItemcreated.parentElement.parentElement.parentElement.parentElement.remove();
-
-            // Vide completement le LocalStorage si suppression de tous les articles
-            if (myLocalStorage.length === 0) {
-              localStorage.clear();
-              let emptyCart = `
-                  <div class="cart__empty">
-                  <p>Votre panier est vide ! 😢</p>
-                  </div>
-                  `;
-              cartItem.innerHTML = emptyCart;
-            }
-
-            // Ne fait rien si annulation de la suppression
           } else {
             console.log("Ok, je n'enlève rien");
           }
@@ -157,22 +144,20 @@ async function productsInBasket() {
         });
       });
     }
-    totalQuantity.innerHTML = totalQuantityInBasket;
-    totalPrice.innerHTML = totalPriceInBasket;
-    console.log("HERE");
   }
+  totalQuantity.innerHTML = totalQuantityInBasket;
+  totalPrice.innerHTML = totalPriceInBasket;
 }
 
 fetchAPI();
 
 async function fetchAPI() {
-  console.log("HERE");
   if (myLocalStorage != null) {
     for await (const element of myLocalStorage) {
       let productIdInBasket = element.id;
 
       // Recuperer les éléments de l'API
-      fetch(urlAPI + productIdInBasket)
+      await fetch(urlAPI + productIdInBasket)
         .then((res) => {
           if (res.ok) {
             return res.json();
@@ -188,10 +173,8 @@ async function fetchAPI() {
         });
     }
     localStorage.setItem("produit", JSON.stringify(myLocalStorage));
-
-    productsInBasket();
-    console.log("HERE");
   }
+  await productsInBasket();
 }
 
 // -------------------------------------------------
@@ -206,6 +189,7 @@ fields.forEach((field) => {
   field.addEventListener(
     "focus",
     () => {
+      onfocus(field);
       resetField(field);
     },
     false
@@ -213,6 +197,7 @@ fields.forEach((field) => {
   field.addEventListener(
     "blur",
     () => {
+      onblur(field);
       validadeField(field);
     },
     false
@@ -235,7 +220,7 @@ contactForm.addEventListener(
       }
     });
     if (valid) {
-      event.target.submit();
+      createContact();
     }
   },
   false
@@ -260,6 +245,7 @@ function resetField(field) {
   let fieldLabel = field.nextElementSibling;
   field.classList.remove("invalid");
   field.classList.remove("valid");
+  field.nextElementSibling.classList.remove("valid__text");
 
   while (fieldLabel.innerHTML != "") {
     fieldLabel.innerHTML = "";
@@ -267,7 +253,77 @@ function resetField(field) {
   field.valid = true;
 }
 
-// Regex email JS
-// /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+// Fonction pour mettre en valeur le champ en cours
+function onfocus(field) {
+  field.classList.add("onfocus");
+}
 
-// Constituer un objet contact (à partir des données du formulaire) et un tableau de produits.
+function onblur(field) {
+  field.classList.remove("onfocus");
+}
+
+// Récupérer les valeurs du formulaire
+// Création du contact
+function createContact() {
+  let contact = {
+    firstName: document.getElementById("firstName").value,
+    lastName: document.getElementById("lastName").value,
+    address: document.getElementById("address").value,
+    city: document.getElementById("city").value,
+    email: document.getElementById("email").value,
+  };
+
+  // Fonction Ajouter dans le local storage
+  localStorage.setItem("contact", JSON.stringify(contact));
+
+  var productIds = [];
+  myLocalStorage.forEach((elt) => {
+    productIds.push(elt.id);
+  });
+
+  console.log(productIds);
+
+  // Données à envoyé au serveur
+  const toSendtoAPI = {
+    contact: contact,
+    products: productIds,
+  };
+  send(toSendtoAPI);
+}
+
+// Récupérer les valeur du formulaire avec le local Storage (si deja rempli une fois
+const getContactValues = localStorage.getItem("contact");
+
+if (getContactValues != null) {
+  const getContactValuesObject = JSON.parse(getContactValues);
+
+  // Mettre les valeurs récuperer dans le formulaire
+  document.getElementById("firstName").value = getContactValuesObject.firstName;
+  document.getElementById("lastName").value = getContactValuesObject.lastName;
+  document.getElementById("address").value = getContactValuesObject.address;
+  document.getElementById("city").value = getContactValuesObject.city;
+  document.getElementById("email").value = getContactValuesObject.email;
+}
+
+// Envoyer le formulaire sur le serveur
+
+function send(toSendtoAPI) {
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(toSendtoAPI),
+  })
+    .then(function (res) {
+      if (res.ok) {
+        return res.json();
+      }
+    })
+    .then(function (value) {
+      if (value.orderId != undefined) {
+        window.location.href = "confirmation.html" + "?id=" + value.orderId;
+      }
+    });
+}

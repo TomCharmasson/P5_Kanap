@@ -152,7 +152,8 @@ h2 {
   color: #51d847 !important;
 }
 .onfocus {
-  border: blue 2px solid !important;
+  border: rgb(38, 101, 173) solid !important;
+  background-color: rgb(146, 222, 252);
 }
 
 /***************/
