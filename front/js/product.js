@@ -77,9 +77,11 @@ ajouterAuPanier.addEventListener("click", (event) => {
   let colorSelected = getTheColor.options[getTheColor.selectedIndex].value;
   // Obtenir la quantité seléctionnée
   let productQuantity = document.querySelector('.item__content__settings__quantity input[value="1"]').valueAsNumber;
+  let resetProductQuantity = document.querySelector("#quantity");
 
   // Vérifier que tous les champs ont été renseigné
-  if (isNaN(productQuantity)) {
+  if (isNaN(productQuantity) || productQuantity === 0) {
+    resetProductQuantity.valueAsNumber = 1;
     window.alert("Veuillez renseigner un nombre");
     return;
   }

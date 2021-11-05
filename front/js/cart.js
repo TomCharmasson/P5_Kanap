@@ -219,7 +219,9 @@ contactForm.addEventListener(
         valid = false;
       }
     });
-    if (valid) {
+    if (myLocalStorage === null || myLocalStorage.length === 0) {
+      window.alert("Votre Panier est Vide 😅");
+    } else if (valid) {
       createContact();
     }
   },
