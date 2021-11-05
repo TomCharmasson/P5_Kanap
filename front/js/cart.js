@@ -1,5 +1,10 @@
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Afficher les détails du panier
+// ----------------------------------------------------------------------
+
 // -------------------------------------------------
-// constantes URL
+// URL API
 // -------------------------------------------------
 
 const urlAPI = "http://localhost:3000/api/products/";
@@ -23,9 +28,11 @@ async function productsInBasket() {
   cart = "";
   cartItem.innerHTML = "";
 
+  // Variables Totaux des produits
   let totalQuantityInBasket = 0;
   let totalPriceInBasket = 0;
 
+  // Verifier si le localStorage est vide
   if (myLocalStorage === null || myLocalStorage.length === 0) {
     let emptyCart = `
     <div class="cart__empty">
@@ -33,6 +40,8 @@ async function productsInBasket() {
     </div>
     `;
     cartItem.innerHTML = emptyCart;
+
+    // Afficher les elements sur la page
   } else {
     for (const element of myLocalStorage) {
       let productColorInBasket = element.color;
@@ -94,10 +103,13 @@ async function productsInBasket() {
       // Evenements
       // -------------------------------------------------
 
+      // Evenement pour la modification de la quantitée
+      // -------------------------------------------------
+
       // Cibler les éléments pour l'événement change
       let itemQuantity = document.querySelectorAll(".itemQuantity");
 
-      // Ajout de l'évènement change pour modifier la quantité du produit dans le panier
+      // Ajout de l'évènement change pour modifier la quantitée du produit dans le panier
       itemQuantity.forEach((createdQuantity) => {
         createdQuantity.addEventListener("change", (event) => {
           event.preventDefault();
@@ -105,10 +117,10 @@ async function productsInBasket() {
           itemQuantity = setQuantity;
 
           // Vérifie que l'utilisateur renseigne correctement le champ
-          if (isNaN(itemQuantity) || itemQuantity === 0) {
+          if (isNaN(itemQuantity) || itemQuantity === 0 || itemQuantity > 100) {
             setQuantity = 1;
             createdQuantity.value = 1;
-            window.alert("Veuillez renseigner une quantité ou supprimer votre arcticle");
+            window.alert("Veuillez renseigner une quantitée comprise entre 1 et 100 ou supprimer votre arcticle");
           }
 
           // Modification de la quantité dans le LocalStorage
@@ -119,9 +131,13 @@ async function productsInBasket() {
             }
           });
 
+          // Appel de la fonction :
           productsInBasket();
         });
       });
+
+      // Evenement pour la suppression d'un produit
+      // -------------------------------------------------
 
       // Cibler les éléments pour l'événement click
       let deleteItem = document.querySelectorAll(".deleteItem");
@@ -140,15 +156,23 @@ async function productsInBasket() {
             console.log("Ok, je n'enlève rien");
           }
 
+          // Appel de la fonction :
           productsInBasket();
         });
       });
     }
   }
+  // Affiche les totaux
   totalQuantity.innerHTML = totalQuantityInBasket;
   totalPrice.innerHTML = totalPriceInBasket;
 }
 
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Recuperer les données de l'API
+// ----------------------------------------------------------------------
+
+// Appel de la fonction :
 fetchAPI();
 
 async function fetchAPI() {
@@ -174,17 +198,26 @@ async function fetchAPI() {
     }
     localStorage.setItem("produit", JSON.stringify(myLocalStorage));
   }
+  // Appel de la fonction :
   await productsInBasket();
 }
 
-// -------------------------------------------------
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 // Formulaire
+// ----------------------------------------------------------------------
+
+// -------------------------------------------------
+// Variables DOM
 // -------------------------------------------------
 
 let contactForm = document.getElementById("form");
 let fields = document.querySelectorAll("input[required]");
 
-// Ajouts des événements sur les champs
+// -------------------------------------------------
+// Ajouts des événements sur les champs du formulaire
+// -------------------------------------------------
+
 fields.forEach((field) => {
   field.addEventListener(
     "focus",
@@ -255,7 +288,7 @@ function resetField(field) {
   field.valid = true;
 }
 
-// Fonction pour mettre en valeur le champ en cours
+// Fonctions pour mettre en valeur le champ en cours
 function onfocus(field) {
   field.classList.add("onfocus");
 }
@@ -264,9 +297,13 @@ function onblur(field) {
   field.classList.remove("onfocus");
 }
 
+// -------------------------------------------------
 // Récupérer les valeurs du formulaire
-// Création du contact
+// -------------------------------------------------
+
+// Fonction pour la création du contact
 function createContact() {
+  // Creation d'un objet contact
   let contact = {
     firstName: document.getElementById("firstName").value,
     lastName: document.getElementById("lastName").value,
@@ -275,40 +312,30 @@ function createContact() {
     email: document.getElementById("email").value,
   };
 
-  // Fonction Ajouter dans le local storage
+  // Ajouter l'objet contact dans le local storage
   localStorage.setItem("contact", JSON.stringify(contact));
 
+  // Création d'un array pour l'id des produits
   var productIds = [];
   myLocalStorage.forEach((elt) => {
     productIds.push(elt.id);
   });
-
-  console.log(productIds);
 
   // Données à envoyé au serveur
   const toSendtoAPI = {
     contact: contact,
     products: productIds,
   };
+
+  // Appel de la fonction :
   send(toSendtoAPI);
 }
 
-// Récupérer les valeur du formulaire avec le local Storage (si deja rempli une fois
-const getContactValues = localStorage.getItem("contact");
-
-if (getContactValues != null) {
-  const getContactValuesObject = JSON.parse(getContactValues);
-
-  // Mettre les valeurs récuperer dans le formulaire
-  document.getElementById("firstName").value = getContactValuesObject.firstName;
-  document.getElementById("lastName").value = getContactValuesObject.lastName;
-  document.getElementById("address").value = getContactValuesObject.address;
-  document.getElementById("city").value = getContactValuesObject.city;
-  document.getElementById("email").value = getContactValuesObject.email;
-}
-
+// -------------------------------------------------
 // Envoyer le formulaire sur le serveur
+// -------------------------------------------------
 
+// Fonction pour envoyer les données au serveur
 function send(toSendtoAPI) {
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -328,4 +355,21 @@ function send(toSendtoAPI) {
         window.location.href = "confirmation.html" + "?id=" + value.orderId;
       }
     });
+}
+
+// -------------------------------------------------
+// Récupérer les valeur du formulaire avec le local Storage (si deja rempli une fois)
+// -------------------------------------------------
+
+const getContactValues = localStorage.getItem("contact");
+
+if (getContactValues != null) {
+  const getContactValuesObject = JSON.parse(getContactValues);
+
+  // Mettre les valeurs récuperer dans le formulaire
+  document.getElementById("firstName").value = getContactValuesObject.firstName;
+  document.getElementById("lastName").value = getContactValuesObject.lastName;
+  document.getElementById("address").value = getContactValuesObject.address;
+  document.getElementById("city").value = getContactValuesObject.city;
+  document.getElementById("email").value = getContactValuesObject.email;
 }
