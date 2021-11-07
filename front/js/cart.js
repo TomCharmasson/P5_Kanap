@@ -17,7 +17,10 @@ let cartItem = document.querySelector("#cart__items");
 let totalQuantity = document.querySelector("#totalQuantity");
 let totalPrice = document.querySelector("#totalPrice");
 
+// -------------------------------------------------
 // Cibler le local storage
+// -------------------------------------------------
+
 let myLocalStorage = JSON.parse(localStorage.getItem("produit"));
 
 // -------------------------------------------------
@@ -99,10 +102,11 @@ async function productsInBasket() {
 
       cartItem.innerHTML += elt;
 
-      // -------------------------------------------------
+      // ----------------------------------------------------------------------
       // Evenements
-      // -------------------------------------------------
+      // ----------------------------------------------------------------------
 
+      // -------------------------------------------------
       // Evenement pour la modification de la quantitée
       // -------------------------------------------------
 
@@ -123,7 +127,7 @@ async function productsInBasket() {
             window.alert("Veuillez renseigner une quantitée comprise entre 1 et 100 ou supprimer votre arcticle");
           }
 
-          // Modification de la quantité dans le LocalStorage
+          // Modification de la quantitée dans le LocalStorage
           myLocalStorage.forEach((element) => {
             if (element.id + "-" + element.color === createdQuantity.id) {
               element.quantity = setQuantity;
@@ -136,6 +140,7 @@ async function productsInBasket() {
         });
       });
 
+      // -------------------------------------------------
       // Evenement pour la suppression d'un produit
       // -------------------------------------------------
 
@@ -214,8 +219,12 @@ async function fetchAPI() {
 let contactForm = document.getElementById("form");
 let fields = document.querySelectorAll("input[required]");
 
-// -------------------------------------------------
+// ----------------------------------------------------------------------
 // Ajouts des événements sur les champs du formulaire
+// ----------------------------------------------------------------------
+
+// -------------------------------------------------
+// Controle les champs du formulaire
 // -------------------------------------------------
 
 fields.forEach((field) => {
@@ -237,29 +246,9 @@ fields.forEach((field) => {
   );
 });
 
-// Ajout de l'évènement sur l'input du formulaire
-contactForm.addEventListener(
-  "submit",
-  (event) => {
-    event.preventDefault();
-    fields.forEach((field) => {
-      resetField(field);
-    });
-    let valid = true;
-
-    fields.forEach((field) => {
-      if (!validadeField(field)) {
-        valid = false;
-      }
-    });
-    if (myLocalStorage === null || myLocalStorage.length === 0) {
-      window.alert("Votre Panier est Vide 😅");
-    } else if (valid) {
-      createContact();
-    }
-  },
-  false
-);
+// -------------------------------------------------
+// Fonctions
+// -------------------------------------------------
 
 // Fonction pour valider un champ
 function validadeField(field) {
@@ -296,6 +285,33 @@ function onfocus(field) {
 function onblur(field) {
   field.classList.remove("onfocus");
 }
+
+// -------------------------------------------------
+// Ajout de l'évènement sur la soumission du formulaire
+// -------------------------------------------------
+
+contactForm.addEventListener(
+  "submit",
+  (event) => {
+    event.preventDefault();
+    fields.forEach((field) => {
+      resetField(field);
+    });
+    let valid = true;
+
+    fields.forEach((field) => {
+      if (!validadeField(field)) {
+        valid = false;
+      }
+    });
+    if (myLocalStorage === null || myLocalStorage.length === 0) {
+      window.alert("Votre Panier est Vide 😅");
+    } else if (valid) {
+      createContact();
+    }
+  },
+  false
+);
 
 // -------------------------------------------------
 // Récupérer les valeurs du formulaire
@@ -358,7 +374,7 @@ function send(toSendtoAPI) {
 }
 
 // -------------------------------------------------
-// Récupérer les valeur du formulaire avec le local Storage (si deja rempli une fois)
+// Rempli le formulaire automatiquement avec les données du local storage (si deja rempli une fois)
 // -------------------------------------------------
 
 const getContactValues = localStorage.getItem("contact");
