@@ -1,5 +1,10 @@
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Afficher les détails d'un produit
+// ----------------------------------------------------------------------
+
 // -------------------------------------------------
-// constantes URL
+// URL API
 // -------------------------------------------------
 
 const urlAPI = "http://localhost:3000/api/products/";
@@ -31,8 +36,9 @@ let productDescription = document.getElementById("description");
 let productColor = document.getElementById("colors");
 
 //  -------------------------------------------------
+//  Requete de l'API
 //  Récupérez le résultat de la requête
-//  Récupérer les éléments pour la page produit dans l'API
+//  Aficher les éléments pour la page produits
 //  -------------------------------------------------
 
 function getProductsDetails() {
@@ -59,13 +65,15 @@ function getProductsDetails() {
     });
 }
 
+// Appel de la fonction :
 getProductsDetails();
 
-//  -------------------------------------------------
-//  Panier
-//  -------------------------------------------------
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+//  Ajout dans le panier
+// ----------------------------------------------------------------------
 
-// Ecouter l'évenement
+// Ecouter l'évenement click sur le bouton ajouter au panier
 let ajouterAuPanier = document.getElementById("addToCart");
 
 ajouterAuPanier.addEventListener("click", (event) => {
@@ -79,18 +87,19 @@ ajouterAuPanier.addEventListener("click", (event) => {
   let productQuantity = document.querySelector('.item__content__settings__quantity input[value="1"]').valueAsNumber;
   let resetProductQuantity = document.querySelector("#quantity");
 
-  // Vérifier que tous les champs ont été renseigné
-  if (isNaN(productQuantity) || productQuantity === 0) {
-    resetProductQuantity.valueAsNumber = 1;
-    window.alert("Veuillez renseigner un nombre");
-    return;
-  }
+  // Vérifier que tous les champs ont été renseignés (couleur et quantité)
   if (colorSelected === "") {
     window.alert("Veuillez renseigner une couleur");
     return;
   }
 
-  // Objet contenant 3 valeurs d'un produit
+  if (isNaN(productQuantity) || productQuantity === 0 || productQuantity > 100) {
+    resetProductQuantity.valueAsNumber = 1;
+    window.alert("Veuillez renseigner un nombre compris entre 1 et 100");
+    return;
+  }
+
+  // Création objet contenant 3 valeurs d'un produit destiné au LocalStorage
   let productOption = {
     id: productId,
     quantity: productQuantity,
@@ -111,6 +120,26 @@ ajouterAuPanier.addEventListener("click", (event) => {
     localStorage.setItem("produit", JSON.stringify(myLocalStorage));
   };
 
+  // Fonction qui vérifie si le même produit existe (même Id et même couleur)
+  const raiseTheQuantityIfSameProduct = () => {
+    let foundTheSameProduct = false;
+    myLocalStorage.forEach((element) => {
+      if (element.id === productId && element.color === colorSelected) {
+        element.quantity += productQuantity;
+        foundTheSameProduct = true;
+      }
+    });
+    if (!foundTheSameProduct) {
+      // Appel de la fonction suivante :
+      addProductToLocalStorage();
+    }
+  };
+
+  // Appel la Fonction suivante :
+  raiseTheQuantityIfSameProduct();
+
+  localStorage.setItem("produit", JSON.stringify(myLocalStorage));
+
   // Fonction Confirmation ajout au panier
   const confirmation = () => {
     if (window.confirm(`Ajouté au panier ✅😁 ! Cliquer OK pour voir votre panier ou ANNULER pour continuer le shopping 💸 !`)) {
@@ -120,24 +149,6 @@ ajouterAuPanier.addEventListener("click", (event) => {
     }
   };
 
-  // Fonction qui vérifie si le même produit existe (même Id et même couleur)
-  const raiseTheQuantityIfSameProduct = () => {
-    let foundIt = false;
-    myLocalStorage.forEach((element) => {
-      if (element.id === productId && element.color === colorSelected) {
-        element.quantity += productQuantity;
-        foundIt = true;
-      }
-    });
-    if (!foundIt) {
-      addProductToLocalStorage();
-    }
-  };
-
-  // Lance la Fonction suivante :
-  raiseTheQuantityIfSameProduct();
-
-  localStorage.setItem("produit", JSON.stringify(myLocalStorage));
-
+  // Appel la Fonction suivante :
   confirmation();
 });
