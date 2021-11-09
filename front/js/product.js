@@ -126,6 +126,7 @@ ajouterAuPanier.addEventListener("click", (event) => {
     myLocalStorage.forEach((element) => {
       if (element.id === productId && element.color === colorSelected) {
         element.quantity += productQuantity;
+        localStorage.setItem("produit", JSON.stringify(myLocalStorage));
         foundTheSameProduct = true;
       }
     });
@@ -137,8 +138,6 @@ ajouterAuPanier.addEventListener("click", (event) => {
 
   // Appel la Fonction suivante :
   raiseTheQuantityIfSameProduct();
-
-  localStorage.setItem("produit", JSON.stringify(myLocalStorage));
 
   // Fonction Confirmation ajout au panier
   const confirmation = () => {
