@@ -23,12 +23,49 @@ let totalPrice = document.querySelector("#totalPrice");
 
 let myLocalStorage = JSON.parse(localStorage.getItem("produit"));
 
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Recuperer les données de l'API
+// ----------------------------------------------------------------------
+
+// Faire un seul appel API pour tous les produits du panier pour eviter de faire plusieurs appels à chaque modification du panier
+
+async function fetchAPI() {
+  if (myLocalStorage != null) {
+    for await (const element of myLocalStorage) {
+      let productIdInBasket = element.id;
+
+      // Recuperer les éléments de l'API
+      await fetch(urlAPI + productIdInBasket)
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+        })
+
+        // Pour chaque valeur de l'API
+        .then((elementAPI) => {
+          element.name = elementAPI.name;
+          element.price = elementAPI.price;
+          element.altTxt = elementAPI.altTxt;
+          element.imageUrl = elementAPI.imageUrl;
+        });
+    }
+    localStorage.setItem("produit", JSON.stringify(myLocalStorage));
+  }
+  // Appel de la fonction :
+  productsInBasket();
+}
+
+// Appel de la fonction :
+fetchAPI();
+
 // -------------------------------------------------
 // Afficher les produits dans le panier
 // -------------------------------------------------
 
-async function productsInBasket() {
-  cart = "";
+function productsInBasket() {
+  // initilise la valeur du panier
   cartItem.innerHTML = "";
 
   // Variables Totaux des produits
@@ -170,41 +207,6 @@ async function productsInBasket() {
   // Affiche les totaux
   totalQuantity.innerHTML = totalQuantityInBasket;
   totalPrice.innerHTML = totalPriceInBasket;
-}
-
-// ----------------------------------------------------------------------
-// ----------------------------------------------------------------------
-// Recuperer les données de l'API
-// ----------------------------------------------------------------------
-
-// Appel de la fonction :
-fetchAPI();
-
-async function fetchAPI() {
-  if (myLocalStorage != null) {
-    for await (const element of myLocalStorage) {
-      let productIdInBasket = element.id;
-
-      // Recuperer les éléments de l'API
-      await fetch(urlAPI + productIdInBasket)
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          }
-        })
-
-        // Pour chaque valeur de l'API
-        .then((elementAPI) => {
-          element.name = elementAPI.name;
-          element.price = elementAPI.price;
-          element.altTxt = elementAPI.altTxt;
-          element.imageUrl = elementAPI.imageUrl;
-        });
-    }
-    localStorage.setItem("produit", JSON.stringify(myLocalStorage));
-  }
-  // Appel de la fonction :
-  await productsInBasket();
 }
 
 // ----------------------------------------------------------------------
