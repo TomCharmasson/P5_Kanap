@@ -65,7 +65,7 @@ fetchAPI();
 // -------------------------------------------------
 
 function productsInBasket() {
-  // initilise la valeur du panier
+  // initialise la valeur du panier
   cartItem.innerHTML = "";
 
   // Variables Totaux des produits
@@ -154,6 +154,7 @@ function productsInBasket() {
       itemQuantity.forEach((createdQuantity) => {
         createdQuantity.addEventListener("change", (event) => {
           event.preventDefault();
+
           let setQuantity = parseInt(createdQuantity.value, 10);
           itemQuantity = setQuantity;
 
@@ -296,6 +297,7 @@ contactForm.addEventListener(
   "submit",
   (event) => {
     event.preventDefault();
+
     fields.forEach((field) => {
       resetField(field);
     });
