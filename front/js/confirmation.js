@@ -7,13 +7,13 @@
 // Récuperer l'Id de la commande dans l'URL
 // -------------------------------------------------
 
-var urlcourante = document.location.href;
+let urlcourante = document.location.href;
 
-var url = new URL(urlcourante);
+let url = new URL(urlcourante);
 
-var search_params = new URLSearchParams(url.search);
+let search_params = new URLSearchParams(url.search);
 
-var orderId = "";
+let orderId = "";
 if (search_params.has("id")) {
   orderId = search_params.get("id");
 }

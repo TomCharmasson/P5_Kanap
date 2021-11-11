@@ -13,13 +13,13 @@ const urlAPI = "http://localhost:3000/api/products/";
 // Récuperer l'Id dans l'url de la page courante
 // -------------------------------------------------
 
-var urlcourante = document.location.href;
+let urlcourante = document.location.href;
 
-var url = new URL(urlcourante);
+let url = new URL(urlcourante);
 
-var search_params = new URLSearchParams(url.search);
+let search_params = new URLSearchParams(url.search);
 
-var productId = "";
+let productId = "";
 if (search_params.has("id")) {
   productId = search_params.get("id");
 }
@@ -62,6 +62,9 @@ function getProductsDetails() {
         let colorSelected = '<option value="' + elt + '">' + elt + "</option>";
         productColor.innerHTML += colorSelected;
       });
+    })
+    .catch((err) => {
+      console.log(err);
     });
 }
 
