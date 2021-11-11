@@ -49,6 +49,9 @@ async function fetchAPI() {
           element.price = elementAPI.price;
           element.altTxt = elementAPI.altTxt;
           element.imageUrl = elementAPI.imageUrl;
+        })
+        .catch((err) => {
+          console.log(err);
         });
     }
     localStorage.setItem("produit", JSON.stringify(myLocalStorage));
@@ -336,7 +339,7 @@ function createContact() {
   localStorage.setItem("contact", JSON.stringify(contact));
 
   // Création d'un array pour l'id des produits
-  var productIds = [];
+  let productIds = [];
   myLocalStorage.forEach((elt) => {
     productIds.push(elt.id);
   });
@@ -374,6 +377,9 @@ function send(toSendtoAPI) {
       if (value.orderId != undefined) {
         window.location.href = "confirmation.html" + "?id=" + value.orderId;
       }
+    })
+    .catch((err) => {
+      console.log(err);
     });
 }
 

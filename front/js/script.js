@@ -17,15 +17,13 @@ let productItem = document.getElementsByClassName("items")[0];
 // Récupérer les éléments pour la page d'accueil dans l'API
 
 function getProducts() {
-  // Promesse
+  // Fetch est asynchrone et renvoi une promesse
   fetch(urlAPI)
-    // Callback
     .then((res) => {
       if (res.ok) {
         return res.json();
       }
     })
-    // Callback
     .then((valeur) => {
       valeur.forEach((element) => {
         let elt =
@@ -48,6 +46,9 @@ function getProducts() {
           "</a>";
         productItem.innerHTML = productItem.innerHTML + elt;
       });
+    })
+    .catch((err) => {
+      console.log(err);
     });
 }
 
