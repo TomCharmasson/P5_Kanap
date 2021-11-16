@@ -48,18 +48,18 @@ function getProductsDetails() {
         return res.json();
       }
     })
-    .then((valeur) => {
-      productName.innerHTML = valeur.name;
+    .then((elementFromAPI) => {
+      productName.innerHTML = elementFromAPI.name;
 
-      productPrice.innerHTML = valeur.price;
+      productPrice.innerHTML = elementFromAPI.price;
 
-      productDescription.innerHTML = valeur.description;
+      productDescription.innerHTML = elementFromAPI.description;
 
-      let image = '<img src="' + valeur.imageUrl + '" alt="' + valeur.altTxt + '"></img>';
+      let image = `<img src="${elementFromAPI.imageUrl}" alt="${elementFromAPI.altTxt}"></img>`;
       productImage.innerHTML = image;
 
-      valeur.colors.forEach((elt) => {
-        let colorSelected = '<option value="' + elt + '">' + elt + "</option>";
+      elementFromAPI.colors.forEach((color) => {
+        let colorSelected = `<option value="${color}">${color}</option>`;
         productColor.innerHTML += colorSelected;
       });
     })

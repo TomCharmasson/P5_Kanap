@@ -8,7 +8,7 @@ const urlAPI = "http://localhost:3000/api/products";
 // Variables DOM
 // -------------------------------------------------
 
-let productItem = document.getElementsByClassName("items")[0];
+let productItem = document.getElementById("items");
 
 //  -------------------------------------------------
 //  Récupérez le résultat de la requête
@@ -25,26 +25,15 @@ function getProducts() {
       }
     })
     .then((valeur) => {
-      valeur.forEach((element) => {
-        let elt =
-          '<a href="./product.html?id=' +
-          element._id +
-          '">' +
-          "<article>" +
-          '<img src="' +
-          element.imageUrl +
-          '" alt="' +
-          element.altTxt +
-          '" />' +
-          '<h3 class="productName">' +
-          element.name +
-          "</h3>" +
-          '<p class="productDescription">' +
-          element.description +
-          "</p>" +
-          "</article>" +
-          "</a>";
-        productItem.innerHTML = productItem.innerHTML + elt;
+      valeur.forEach((elementFromAPI) => {
+        let item = `<a href="./product.html?id=${elementFromAPI._id}">
+          <article>
+            <img src="${elementFromAPI.imageUrl}" alt="${elementFromAPI.altTxt}" />
+            <h3 class="productName">${elementFromAPI.name}</h3>
+            <p class="productDescription">${elementFromAPI.description}</p>
+          </article>
+        </a>`;
+        productItem.innerHTML += item;
       });
     })
     .catch((err) => {
