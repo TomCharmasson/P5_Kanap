@@ -44,11 +44,11 @@ async function fetchAPI() {
         })
 
         // Pour chaque valeur de l'API
-        .then((elementAPI) => {
-          element.name = elementAPI.name;
-          element.price = elementAPI.price;
-          element.altTxt = elementAPI.altTxt;
-          element.imageUrl = elementAPI.imageUrl;
+        .then((elementFromAPI) => {
+          element.name = elementFromAPI.name;
+          element.price = elementFromAPI.price;
+          element.altTxt = elementFromAPI.altTxt;
+          element.imageUrl = elementFromAPI.imageUrl;
         })
         .catch((err) => {
           console.log(err);
@@ -77,12 +77,11 @@ function productsInBasket() {
 
   // Verifier si le localStorage est vide
   if (myLocalStorage === null || myLocalStorage.length === 0) {
-    let emptyCart = `
+    let emptyCartText = `
     <div class="cart__empty">
-    <p>Votre panier est vide ! 😢</p>
-    </div>
-    `;
-    cartItem.innerHTML = emptyCart;
+      <p>Votre panier est vide ! 😢</p>
+    </div>`;
+    cartItem.innerHTML = emptyCartText;
 
     // Afficher les elements sur la page
   } else {
@@ -90,52 +89,27 @@ function productsInBasket() {
       let productColorInBasket = element.color;
       let productQuantityInBasket = element.quantity;
 
-      let elt =
-        '<article class="cart__item" data-id="' +
-        element.id +
-        '">' +
-        '<div class="cart__item__img">' +
-        '<img src="' +
-        element.imageUrl +
-        '" alt="' +
-        element.altTxt +
-        '">' +
-        "</div>" +
-        '<div class="cart__item__content">' +
-        '<div class="cart__item__content__titlePrice">' +
-        "<h2>" +
-        element.name +
-        "</h2>" +
-        "<p>Couleur : " +
-        productColorInBasket +
-        "</p>" +
-        '<p class="item__price__update">' +
-        element.price * productQuantityInBasket +
-        ",00 €</p>" +
-        "</div>" +
-        '<div class="cart__item__content__settings">' +
-        '<div class="cart__item__content__settings__quantity">' +
-        '<p class="item__quantity__update">Qté : ' +
-        productQuantityInBasket +
-        " </p>" +
-        '<input type="number" id="' +
-        element.id +
-        "-" +
-        productColorInBasket +
-        '" class="itemQuantity" name="itemQuantity" min="1" max="100" value="' +
-        productQuantityInBasket +
-        '">' +
-        "</div>" +
-        '<div class="cart__item__content__settings__delete">' +
-        '<p id="' +
-        element.id +
-        "-" +
-        productColorInBasket +
-        '" class="deleteItem">Supprimer</p>' +
-        "</div>" +
-        "</div>" +
-        "</div>" +
-        "</article>";
+      let elt = `<article class="cart__item" data-id="${element.id}">
+          <div class="cart__item__img">
+            <img src="${element.imageUrl}" alt="${element.altTxt}">
+          </div>
+          <div class="cart__item__content">
+            <div class="cart__item__content__titlePrice">
+              <h2>${element.name}</h2>
+              <p>Couleur : ${productColorInBasket}</p>
+              <p class="item__price__update">${element.price * productQuantityInBasket},00 €</p>
+            </div>
+            <div class="cart__item__content__settings">
+              <div class="cart__item__content__settings__quantity">
+                <p class="item__quantity__update">Qté : ${productQuantityInBasket}</p>
+                <input type="number" id="${element.id}-${productColorInBasket}" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${productQuantityInBasket}">
+              </div>
+              <div class="cart__item__content__settings__delete">
+                <p id="${element.id}-${productColorInBasket}" class="deleteItem">Supprimer</p>
+              </div>
+            </div>
+          </div>
+        </article>`;
 
       totalQuantityInBasket += productQuantityInBasket;
       totalPriceInBasket += productQuantityInBasket * element.price;
